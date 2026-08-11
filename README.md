@@ -56,9 +56,11 @@ The installer creates symlinks from `ComfyUI/custom_nodes/` to the three bundled
 component directories. Use `--copy` instead if symlinks are unsuitable.
 
 - `docs/installation.md`
+- `docs/public-engineering-report.md` — complete public history and evidence.
 - `docs/benchmarking.md`
 - `docs/rocm.md`
 - `docs/models.md`
+- `docs/privacy.md`
 
 ## Run the benchmark runner
 
