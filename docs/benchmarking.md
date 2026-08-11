@@ -52,7 +52,17 @@ Save a sanitized summary with:
 - limitations.
 
 Remove prompt IDs, local paths, hostnames, private IP addresses, usernames, and
-raw logs before sharing.
+raw logs before sharing. The runner's raw manifest includes the prompt and server
+configuration. Sanitize it, inspect the result manually, and run the public gate:
+
+```bash
+python tools/sanitize_manifest.py raw.json public.json
+python tools/check_public_content.py
+```
+
+The sanitizer removes private prompts and common identifying fields and redacts
+suspicious string values. It is defense in depth, not proof that a human review
+is unnecessary.
 
 ## Projections
 

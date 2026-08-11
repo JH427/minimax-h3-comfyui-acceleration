@@ -156,11 +156,13 @@ Important limitations:
 
 ### FirstBlockCache Safe
 
-FirstBlockCache Safe reuses first-block work under conservative temporal guards.
-The tested safe configuration limited consecutive cache hits and retained a
-native control path. It produced a useful speedup in the matched comparison,
-but the long-form campaign showed that audio level and quality still require
-careful validation for each workflow.
+FirstBlockCache Safe reuses first-block work with a calibrated 0.08 residual
+threshold, a protected denoising window, and at most two consecutive cache hits.
+The measured Safe lane used the named preset, which does **not** enable the
+optional Custom-mode temporal guard. The serialized public graph now states that
+effective setting explicitly. It produced a useful speedup in the matched
+comparison, but the long-form campaign showed that audio level and quality still
+require careful validation for each workflow.
 
 ### Turbo
 
@@ -170,8 +172,11 @@ methods. Turbo 8 is the useful fast lane from the long-form campaign. Turbo 6
 was the fastest short-run draft, but it showed the largest trajectory and visual
 regressions and is not presented as a quality candidate.
 
-The Turbo weight is intentionally not redistributed. Users must obtain any
-required model or LoRA files from an authorized source.
+The Turbo LoRA weight is intentionally not redistributed. Users must obtain model
+and LoRA files from an authorized source. The bundled 5.5 MB
+`h3_silu_temb_grid.safetensors` file is not a model weight; it is the upstream
+runtime interpolation table required for pruned-checkpoint time conditioning.
+Its immutable source and checksum are recorded in `vendored-components.json`.
 
 ## 4. Measured results
 
@@ -268,7 +273,7 @@ an explicit `--server` value. It does not contain a private machine address.
 
 ## 8. Public package design
 
-The repository is a meta-package rather than a fork of all ComfyUI. It includes:
+The repository is a source integration bundle rather than a fork of all ComfyUI. It includes:
 
 - reusable custom-node components;
 - a standalone benchmark graph runner;

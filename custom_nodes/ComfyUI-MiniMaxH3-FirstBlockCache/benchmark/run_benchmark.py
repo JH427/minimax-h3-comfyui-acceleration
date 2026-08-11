@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import time
 import urllib.error
@@ -15,7 +16,10 @@ BASE_URL = "http://127.0.0.1:8195"
 SEED = 20260807
 ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
-COMFY_OUTPUT = Path(r"C:\Users\ama\Desktop\minimax-h3\ComfyUI_windows_portable\ComfyUI\output")
+_COMFY_OUTPUT_ENV = os.environ.get("COMFY_OUTPUT")
+COMFY_OUTPUT = (
+    Path(_COMFY_OUTPUT_ENV).expanduser().resolve() if _COMFY_OUTPUT_ENV else None
+)
 
 PROMPT = """integrated_multimodal_description: [Shot 1] Realistic live-action single continuous shot at dawn in a quiet misty pine forest. A red fox walks carefully through a shallow clear stream toward the camera, placing each paw naturally between smooth wet stones. Water ripples around its legs and droplets catch the soft golden light. The fox pauses briefly, looks toward a distant sound, then continues forward while its ears and tail move naturally. The camera performs a slow stable tracking move backward at the fox's eye level, maintaining a medium shot with gentle natural depth of field. Fine fur, water reflections, mist, and forest textures remain realistic and physically coherent throughout.
 
@@ -160,7 +164,20 @@ def wait_for_prompt(prompt_id: str, timeout: float = 3600.0) -> dict:
     raise TimeoutError(f"Prompt {prompt_id} did not finish within {timeout:.0f}s")
 
 
+def safe_output_path(output_root: Path, subfolder: str, filename: str) -> Path:
+    """Resolve one API history file without allowing output-root escapes."""
+    root = output_root.expanduser().resolve()
+    candidate = (root / subfolder / filename).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError as exc:
+        raise ValueError(f"history output is outside COMFY_OUTPUT: {candidate}") from exc
+    return candidate
+
+
 def output_files(history: dict) -> list[Path]:
+    if COMFY_OUTPUT is None:
+        raise RuntimeError("Set COMFY_OUTPUT to the ComfyUI output directory")
     paths: list[Path] = []
     for node_output in history.get("outputs", {}).values():
         for items in node_output.values():
@@ -171,7 +188,13 @@ def output_files(history: dict) -> list[Path]:
                     continue
                 if item.get("type", "output") != "output":
                     continue
-                paths.append(COMFY_OUTPUT / item.get("subfolder", "") / item["filename"])
+                paths.append(
+                    safe_output_path(
+                        COMFY_OUTPUT,
+                        str(item.get("subfolder", "")),
+                        str(item["filename"]),
+                    )
+                )
     return paths
 
 

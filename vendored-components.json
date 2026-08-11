@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "imported_at": "2026-08-11T14:29:51-04:00",
+  "workflow_sources": [
+    {
+      "name": "Comfy Org MiniMax H3 native template",
+      "upstream": "https://github.com/Comfy-Org/workflow_templates",
+      "commit": "5c75d9f137bb27706a70dd337dac6249b2e51ded",
+      "upstream_path": "templates/video_minimax_h3_t2v.json",
+      "license": "MIT",
+      "license_file": "LICENSE-COMFY-WORKFLOW-TEMPLATES-MIT.txt",
+      "sha256": "31ab33fdb053a7834cc866bd7aa08b887518fc656e4a796c89779c6b5e1786e6",
+      "files": [
+        "workflows/h3-native-t2v.json"
+      ]
+    },
+    {
+      "name": "MiniMax H3 Turbo example workflow",
+      "upstream": "https://github.com/Larryvrh/ComfyUI-MiniMax-H3-Turbo",
+      "commit": "55fee864dd7b2976b1c4ce3c3d5f7968f181409f",
+      "upstream_path": "example_workflows/minimax_h3_t2v_turbo.json",
+      "license": "Apache-2.0",
+      "license_file": "custom_nodes/ComfyUI-MiniMax-H3-Turbo/LICENSE",
+      "derived_files": [
+        "workflows/h3-turbo8-t2v.json",
+        "workflows/h3-spectrum-t2v.json",
+        "workflows/h3-fbc-safe-t2v.json"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "name": "ComfyUI-MiniMax-H3-Turbo",
+      "path": "custom_nodes/ComfyUI-MiniMax-H3-Turbo",
+      "upstream": "https://github.com/Larryvrh/ComfyUI-MiniMax-H3-Turbo",
+      "version": "1.2.3",
+      "commit": "55fee864dd7b2976b1c4ce3c3d5f7968f181409f",
+      "tree": "475dfefa659898cb9295c0f232df2a0d8cacdcc1",
+      "license": "Apache-2.0",
+      "local_changes": [
+        "Omitted upstream node.zip packaging archive; source files are included directly.",
+        "Updated the bundled example workflow to the promoted eight-step v4 step-600 model selections.",
+        "Updated sampler help text to describe the supported four-to-eight-step range."
+      ],
+      "runtime_assets": [
+        {
+          "path": "custom_nodes/ComfyUI-MiniMax-H3-Turbo/h3_silu_temb_grid.safetensors",
+          "role": "Pruned-checkpoint time-conditioning interpolation grid; not a model or LoRA weight.",
+          "size_bytes": 5510600,
+          "sha256": "30eb3c2cc7fb6b470d9717ff840d359313ac27cd64b705e32da1baa10f72d6a8",
+          "upstream_blob": "https://github.com/Larryvrh/ComfyUI-MiniMax-H3-Turbo/blob/55fee864dd7b2976b1c4ce3c3d5f7968f181409f/h3_silu_temb_grid.safetensors"
+        }
+      ]
+    },
+    {
+      "name": "ComfyUI-MiniMaxH3-FirstBlockCache",
+      "path": "custom_nodes/ComfyUI-MiniMaxH3-FirstBlockCache",
+      "upstream": "https://github.com/duckyshell/ComfyUI-MiniMaxH3-FirstBlockCache",
+      "version": "1.0.0",
+      "commit": "725973c3bfd9de6dce249bc93dc5fe27f820df31",
+      "tree": "07e21e96f537ec01642dd8926881baf10d59965d",
+      "license": "MIT",
+      "local_changes": [
+        "Disable cross-call residual reuse when ComfyUI supplies no stable UUID metadata.",
+        "Add regression coverage for missing UUID metadata.",
+        "Replace a hard-coded benchmark output path with the COMFY_OUTPUT environment variable.",
+        "Omit generated benchmark JSON/media and link to immutable upstream evidence."
+      ],
+      "runtime_assets": []
+    },
+    {
+      "name": "ComfyUI-Spectrum-MiniMax-H3",
+      "path": "custom_nodes/ComfyUI-Spectrum-MiniMax-H3",
+      "upstream": "https://github.com/xmarre/ComfyUI-Spectrum-MiniMax-H3",
+      "version": "0.2.5",
+      "commit": "4b9a7d1163348c67e7e475423f24f8b7abb23565",
+      "tree": "06b9fbf7bd432f9562121e1eebdb7b4a1617b6ec",
+      "license": "GPL-3.0-or-later",
+      "local_changes": [],
+      "runtime_assets": []
+    }
+  ]
+}
