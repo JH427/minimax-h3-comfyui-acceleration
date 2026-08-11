@@ -1,9 +1,9 @@
-"""ComfyUI nodes for the MiniMax-H3 Turbo LoRA (4-step audio-video).
+"""ComfyUI nodes for the MiniMax-H3 Turbo LoRA (4–8-step audio-video).
 
 Drops into the stock MiniMax-H3 workflow (t2v and i2v):
 
   MiniMaxH3TurboLoRA    MODEL -> MODEL   applies the turbo LoRA
-  MiniMaxH3TurboSampler       -> SAMPLER 4-step sampler for SamplerCustomAdvanced
+  MiniMaxH3TurboSampler       -> SAMPLER 4–8-step sampler for SamplerCustomAdvanced
 
 On older ComfyUI the sampler steps the video and audio streams on their own flow
 schedules (video shift 12, audio shift 3), because a stock single-schedule sampler
@@ -247,8 +247,9 @@ class MiniMaxH3TurboSampler:
     RETURN_TYPES = ("SAMPLER",)
     FUNCTION = "get_sampler"
     CATEGORY = "MiniMaxH3Turbo"
-    DESCRIPTION = ("4-step sampler for the MiniMax-H3 Turbo LoRA. Feed into "
-                   "SamplerCustomAdvanced and set the scheduler to 4 steps. "
+    DESCRIPTION = ("4–8-step sampler for the MiniMax-H3 Turbo LoRA. Feed into "
+                   "SamplerCustomAdvanced and set the scheduler within the LoRA's "
+                   "supported 4–8-step range; this bundle promotes 8 steps. "
                    "Auto-adapts to the ComfyUI version: on recent builds that "
                    "handle the audio schedule natively (ModelSamplingAV) it steps "
                    "as a plain single-schedule sampler; on older builds it steps "

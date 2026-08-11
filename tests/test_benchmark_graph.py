@@ -2,8 +2,15 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parents[1] / "tools"))
-from benchmark import prompt_graph  # noqa: E402
+from benchmark import (  # noqa: E402
+    default_steps,
+    prompt_graph,
+    valid_frame_count,
+    validate_http_url,
+)
 
 
 def make_args(accel="control", steps=20):
@@ -25,6 +32,30 @@ def make_args(accel="control", steps=20):
     )
 
 
+def test_server_url_allows_only_http_and_https():
+    assert validate_http_url("http://127.0.0.1:8188") == "http://127.0.0.1:8188"
+    assert validate_http_url("https://example.com/comfy") == "https://example.com/comfy"
+    with pytest.raises(ValueError, match="HTTP or HTTPS"):
+        validate_http_url("file:///tmp/history.json")
+    with pytest.raises(ValueError, match="hostname"):
+        validate_http_url("http:///missing-host")
+
+
+def test_h3_frame_count_grid_validation():
+    assert valid_frame_count(5)
+    assert valid_frame_count(39)
+    assert valid_frame_count(124)
+    assert not valid_frame_count(0)
+    assert not valid_frame_count(40)
+
+
+def test_lane_specific_default_steps():
+    assert default_steps("control") == 20
+    assert default_steps("fbc-safe") == 20
+    assert default_steps("spectrum") == 20
+    assert default_steps("turbo") == 8
+
+
 def test_control_keeps_native_model_and_sampler():
     graph = prompt_graph(make_args())
     assert graph["16"]["inputs"]["model"] == ["6", 0]
@@ -35,6 +66,8 @@ def test_control_keeps_native_model_and_sampler():
 def test_fbc_safe_patches_model_for_guider_and_scheduler():
     graph = prompt_graph(make_args("fbc-safe"))
     assert graph["200"]["class_type"] == "ApplyMiniMaxH3FirstBlockCache"
+    assert graph["200"]["inputs"]["mode"] == "H3 Safe — 0.08 / max 2"
+    assert graph["200"]["inputs"]["temporal_guard"] is False
     assert graph["16"]["inputs"]["model"] == ["200", 0]
     assert graph["9"]["inputs"]["model"] == ["200", 0]
 

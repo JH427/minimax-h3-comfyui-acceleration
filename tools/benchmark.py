@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Matched 39-frame MiniMax H3 accelerator tracer for Horizon.
+"""Matched MiniMax H3 accelerator tracer for public reproducibility.
 
 This standalone graph runner never changes the production workflow. Accelerators
 are mutually exclusive by construction.
@@ -8,6 +8,7 @@ import argparse
 import json
 import os
 import time
+import urllib.parse
 import urllib.request
 
 
@@ -15,17 +16,36 @@ def link(node, slot=0):
     return [str(node), slot]
 
 
+def default_steps(accel: str) -> int:
+    return 8 if accel == "turbo" else 20
+
+
+def valid_frame_count(length: int) -> bool:
+    return length >= 5 and (length - 5) % 17 == 0
+
+
+def validate_http_url(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError("ComfyUI endpoint must use HTTP or HTTPS")
+    if not parsed.hostname:
+        raise ValueError("ComfyUI endpoint must include a hostname")
+    return url
+
+
 def post_json(url, payload, timeout=30):
+    validate_http_url(url)
     body = json.dumps(payload).encode()
     request = urllib.request.Request(
         url, data=body, headers={"Content-Type": "application/json"}
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
         return json.loads(response.read().decode())
 
 
 def get_json(url, timeout=30):
-    with urllib.request.urlopen(url, timeout=timeout) as response:
+    validate_http_url(url)
+    with urllib.request.urlopen(url, timeout=timeout) as response:  # nosec B310
         return json.loads(response.read().decode())
 
 
@@ -104,7 +124,7 @@ def prompt_graph(args):
             "start_percent": 0.10,
             "end_percent": 0.95,
             "max_consecutive_hits": 2,
-            "temporal_guard": True,
+            "temporal_guard": False,
         }}
         model_link = link(200)
     elif args.accel == "turbo":
@@ -158,7 +178,12 @@ def main():
     parser.add_argument("--width", type=int, default=608)
     parser.add_argument("--height", type=int, default=352)
     parser.add_argument("--length", type=int, default=39)
-    parser.add_argument("--steps", type=int, default=20)
+    parser.add_argument(
+        "--steps",
+        type=int,
+        default=None,
+        help="Sampling steps (default: 8 for Turbo, 20 for other lanes)",
+    )
     parser.add_argument("--seed", type=int, default=9001)
     parser.add_argument(
         "--accel",
@@ -171,11 +196,17 @@ def main():
     parser.add_argument("--client-id", default="minimax-h3-acceleration-benchmark")
     parser.add_argument("--prompt", default=(
         "Single continuous shot, a red glass marble rolls slowly across a black reflective table, "
-        "a narrow warm spotlight travels across its surface, tiny room tone and a soft glass tap at "
-        "the end, photorealistic cinematic macro film, no text, no cuts."
+        "a narrow warm spotlight travels across its surface, tiny room tone and a soft "
+        "glass tap at the end, photorealistic cinematic macro film, no text, no cuts."
     ))
     args = parser.parse_args()
-    base = args.server.rstrip("/")
+    if args.steps is None:
+        args.steps = default_steps(args.accel)
+    if args.steps < 1:
+        parser.error("--steps must be at least 1")
+    if not valid_frame_count(args.length):
+        parser.error("--length must follow the MiniMax H3 17*k+5 frame grid")
+    base = validate_http_url(args.server).rstrip("/")
     submitted = time.time()
     prompt_id = post_json(base + "/prompt", {
         "prompt": prompt_graph(args),

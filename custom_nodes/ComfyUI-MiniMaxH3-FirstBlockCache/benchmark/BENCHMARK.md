@@ -1,5 +1,10 @@
 # MiniMax H3 FirstBlockCache — benchmark
 
+> Bundle note: generated result JSON/media are intentionally omitted. Immutable
+> upstream evidence links below point to commit
+> `725973c3bfd9de6dce249bc93dc5fe27f820df31`. The bundled runner reads the local
+> ComfyUI output directory from `COMFY_OUTPUT` instead of a hard-coded path.
+
 ## Fixed setup
 
 - Backend: SageAttention 2.2.0 (`--use-sage-attention`)
@@ -44,7 +49,7 @@ The similar Fast gain on native (`1.49×`) and SageAttention2 (`1.44×`) shows t
 
 ## Output review
 
-[Warm comparison grid](results/sage2_warm_comparison_grid.jpg)
+[Warm comparison grid](https://raw.githubusercontent.com/duckyshell/ComfyUI-MiniMaxH3-FirstBlockCache/725973c3bfd9de6dce249bc93dc5fe27f820df31/benchmark/results/sage2_warm_comparison_grid.jpg)
 
 https://github.com/user-attachments/assets/ad504313-6a94-44ab-b3c5-beca2511e4cd
 

@@ -1,0 +1,21 @@
+This repository is a mixed-license source aggregation.
+
+Original integration glue, root tests, API prompt graphs, generators, and
+documentation are Apache-2.0; see LICENSE-APACHE-2.0.txt.
+
+Frontend workflow files retain their source licenses:
+
+- workflows/h3-native-t2v.json: Comfy Org MIT template; see
+  LICENSE-COMFY-WORKFLOW-TEMPLATES-MIT.txt.
+- workflows/h3-turbo8-t2v.json, workflows/h3-spectrum-t2v.json, and
+  workflows/h3-fbc-safe-t2v.json: derived from the Apache-2.0 Turbo example.
+
+Vendored components retain their own licenses:
+
+- custom_nodes/ComfyUI-MiniMax-H3-Turbo/: Apache-2.0
+- custom_nodes/ComfyUI-MiniMaxH3-FirstBlockCache/: MIT
+- custom_nodes/ComfyUI-Spectrum-MiniMax-H3/: GPL-3.0-or-later
+
+See NOTICE.md and vendored-components.json for immutable provenance, local
+modifications, and runtime-asset records. This top-level notice does not
+relicense any vendored component.

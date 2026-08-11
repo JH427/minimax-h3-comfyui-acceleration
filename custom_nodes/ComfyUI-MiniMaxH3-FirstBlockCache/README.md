@@ -1,8 +1,13 @@
 # ComfyUI MiniMax H3 FirstBlockCache
 
+> Bundle modification notice: this vendored copy disables cross-call residual
+> reuse when ComfyUI does not provide stable UUID metadata, adds regression
+> coverage, and removes generated benchmark media from the local tree. See
+> `../../vendored-components.json` and the retained MIT license.
+
 A lightweight, dependency-free model patch node for native ComfyUI MiniMax H3. It executes the first transformer block on every denoising step and reuses the cached residual of the remaining block stack when the current residual change is small enough.
 
-![Fixed-seed SageAttention2 benchmark grid](benchmark/results/sage2_warm_comparison_grid.jpg)
+![Fixed-seed SageAttention2 benchmark grid](https://raw.githubusercontent.com/duckyshell/ComfyUI-MiniMaxH3-FirstBlockCache/725973c3bfd9de6dce249bc93dc5fe27f820df31/benchmark/results/sage2_warm_comparison_grid.jpg)
 
 ## Measured result
 
@@ -64,6 +69,11 @@ Sol Engine studies cache as one part of a broader full-stack acceleration system
 ## Limitations
 
 FirstBlockCache is an approximation, not a lossless optimization. Fixed-seed output remains deterministic for a selected mode, but cached and uncached generations follow different numerical trajectories. Review important outputs visually. `Fast` is the practical default; use `Safe` when fidelity to the uncached trajectory matters more than speed.
+
+For correctness, this bundled copy disables cross-call cache reuse when ComfyUI
+or a wrapper does not provide stable `transformer_options["uuids"]` metadata.
+Generation still runs, but cache acceleration is intentionally unavailable on
+that path rather than risking residual reuse across independent branches.
 
 ## License
 

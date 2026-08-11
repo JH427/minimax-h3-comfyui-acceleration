@@ -1,26 +1,64 @@
 # Workflow examples
 
-This directory contains two kinds of examples:
+## Frontend UI workflows
 
-- `h3-native-t2v.json` and `h3-turbo8-t2v.json` are ComfyUI UI workflow files
-  intended for loading in the frontend.
-- `api/` contains API-format prompt graphs generated from
-  `tools/benchmark.py`. Submit one to a compatible ComfyUI `/prompt` endpoint
-  or use it as a reference when building a UI graph.
+Load these files through the ComfyUI frontend:
 
-API lane examples:
+| Lane | File | Steps | Sampler |
+|---|---|---:|---|
+| Native | `h3-native-t2v.json` | 20 | `res_multistep` |
+| Spectrum | `h3-spectrum-t2v.json` | 20 | `res_multistep` |
+| FBC Safe | `h3-fbc-safe-t2v.json` | 20 | `res_multistep` |
+| Turbo | `h3-turbo8-t2v.json` | 8 | dedicated Turbo sampler |
 
-- `api/h3-native-20.json` — native control, 20 steps.
-- `api/h3-spectrum-20.json` — Spectrum with audio-safe replay defaults.
-- `api/h3-fbc-safe-20.json` — conservative FirstBlockCache configuration.
-- `api/h3-turbo-8.json` — Turbo 8 sampler lane.
+Spectrum uses audio-safe offline replay defaults. FBC uses the named Safe preset;
+its optional Custom-mode temporal guard is not enabled. Turbo uses the promoted
+pruned INT8 base, NVFP4 encoder, and v4 step-600 LoRA filenames documented in
+`docs/models.md`.
 
-The API examples use a benign synthetic marble prompt, 608x352, 39 frames, and
-seed 9001. Change model filenames to match your local model registry. No model
-weights or generated media are included.
-
-For a complete HTTP runner with timing and history polling, use:
+The Spectrum and FBC UI files are deterministically generated from the explicit
+H3 graph. Verify them with:
 
 ```bash
-python tools/benchmark.py --accel spectrum --length 39 --steps 20
+python tools/generate_ui_examples.py --check
 ```
+
+## API prompt graphs
+
+The `api/` directory contains generated inner prompt graphs:
+
+- `api/h3-native-20.json`
+- `api/h3-spectrum-20.json`
+- `api/h3-fbc-safe-20.json`
+- `api/h3-turbo-8.json`
+
+These files are not complete `/prompt` request bodies. ComfyUI expects the graph
+under the `prompt` key, plus an optional `client_id`.
+
+Exact submission example with `jq` and `curl`:
+
+```bash
+jq -n \
+  --slurpfile graph workflows/api/h3-spectrum-20.json \
+  '{prompt: $graph[0], client_id: "minimax-h3-public-example"}' \
+| curl --fail-with-body \
+    --header 'Content-Type: application/json' \
+    --data-binary @- \
+    http://127.0.0.1:8188/prompt
+```
+
+For submission, history polling, timing, and lane-correct step defaults, prefer:
+
+```bash
+python tools/benchmark.py --accel spectrum --length 39
+```
+
+Regenerate or verify API examples with:
+
+```bash
+python tools/generate_api_examples.py
+python tools/generate_api_examples.py --check
+```
+
+All public examples use a benign synthetic marble prompt, 608x352, 39 frames,
+and seed 9001. Model weights and generated media are not included.

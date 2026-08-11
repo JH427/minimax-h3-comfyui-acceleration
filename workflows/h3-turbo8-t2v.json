@@ -312,7 +312,7 @@
         "Node name for S&R": "CLIPLoader"
       },
       "widgets_values": [
-        "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
         "minimax",
         "default"
       ]
@@ -345,7 +345,7 @@
         "Node name for S&R": "UNETLoader"
       },
       "widgets_values": [
-        "minimax_h3_fl2va_int8_convrot.safetensors",
+        "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
         "default"
       ]
     },
@@ -384,8 +384,9 @@
         "Node name for S&R": "MiniMaxH3TurboLoRA"
       },
       "widgets_values": [
-        "minimax_h3_turbo_4step_ema_ckpt500.safetensors",
-        1
+        "minimax_h3_turbo_v4_step600_ema.safetensors",
+        1,
+        false
       ]
     },
     {
@@ -590,7 +591,7 @@
       },
       "widgets_values": [
         "simple",
-        6,
+        8,
         1
       ]
     },

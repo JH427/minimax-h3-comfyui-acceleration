@@ -99,8 +99,14 @@ class MiniMaxH3FirstBlockCache:
     def begin_call(self, x, timestep, transformer_options, minimax_payload=None):
         sigma = float(timestep.flatten()[0].item()) / 1000.0
         uuids = transformer_options.get("uuids")
-        key = tuple(str(value) for value in uuids) if uuids else ("default",)
-        context = self.contexts.setdefault(key, CacheContext())
+        if uuids:
+            key = tuple(str(value) for value in uuids)
+            context = self.contexts.setdefault(key, CacheContext())
+        else:
+            # Without stable branch metadata, reusing residuals across calls can
+            # mix independent conditioning paths. A fresh context preserves
+            # correctness while intentionally disabling cross-step cache hits.
+            context = CacheContext()
         signature = self._input_signature(x)
         if context.input_signature != signature or (context.previous_sigma is not None and sigma > context.previous_sigma + 1e-7):
             context.clear_tensors()
