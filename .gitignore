@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local ComfyUI state and generated media
+output/
+user/
+input/
+models/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.mp4
+*.webm
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.jsonl
+*.log
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

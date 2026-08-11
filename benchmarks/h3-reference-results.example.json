@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "benchmark": "MiniMax H3 acceleration reference",
+  "hardware_class": "AMD Strix Halo unified-memory system",
+  "resolution": "608x352",
+  "fps": 24,
+  "steps": 20,
+  "frames": 124,
+  "duration_seconds": 5.166667,
+  "lanes": [
+    {"name": "Native 20", "execution_seconds": 444.671, "speedup_vs_native": 1.0, "evidence": "measured"},
+    {"name": "Spectrum 20", "execution_seconds": 279.322, "speedup_vs_native": 1.592, "evidence": "measured", "actual_transformer_calls": 12, "forecast_calls": 8, "fallbacks": 0},
+    {"name": "FBC Safe 20", "execution_seconds": 301.975, "speedup_vs_native": 1.473, "evidence": "measured"},
+    {"name": "Turbo 8", "execution_seconds": 208.391, "speedup_vs_native": 2.134, "evidence": "measured"}
+  ],
+  "limitations": [
+    "One prompt and one seed.",
+    "Hardware-specific result.",
+    "Quality review is provisional and not a universal guarantee."
+  ]
+}
