@@ -13,7 +13,7 @@ when its node is explicitly inserted into a workflow.
 - Turbo H3 sampler/LoRA integration.
 - A standalone HTTP benchmark runner.
 - Contract tests for the generated ComfyUI graphs.
-- Example workflows without model weights or generated media.
+- Example UI workflows and API graphs for Native, Spectrum, FBC Safe, and Turbo 8.
 - Reproducible measurement and output-validation guides.
 
 ## Reference measurements
@@ -61,6 +61,11 @@ component directories. Use `--copy` instead if symlinks are unsuitable.
 - `docs/rocm.md`
 - `docs/models.md`
 - `docs/privacy.md`
+
+## Workflow examples
+
+See `workflows/README.md`. The repository now includes UI workflows plus API
+prompt graphs for Native 20, Spectrum 20, FBC Safe 20, and Turbo 8.
 
 ## Run the benchmark runner
 
